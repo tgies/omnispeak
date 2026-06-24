@@ -581,11 +581,19 @@ bool IN_JoyPresent(int joystick)
 
 void IN_GetJoyAbs(int joystick, int *x, int *y)
 {
+	if (!in_backend->joyPresent(joystick))
+	{
+		if (x) *x = 0;
+		if (y) *y = 0;
+		return;
+	}
 	in_backend->joyGetAbs(joystick, x, y);
 }
 
 uint16_t IN_GetJoyButtonsDB(int joystick)
 {
+	if (!in_backend->joyPresent(joystick))
+		return 0;
 	return in_backend->joyGetButtons(joystick);
 }
 
