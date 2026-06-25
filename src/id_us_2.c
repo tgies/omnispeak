@@ -1060,7 +1060,7 @@ void US_RunCards()
 {
 	int16_t controller_dy;
 	int16_t prev_controller_motion;
-	uint32_t cursor_time;
+	uint32_t blink_time, last_cursor_time;
 	//ControlInfo status;
 	bool action_taken;
 
@@ -1089,12 +1089,12 @@ void US_RunCards()
 		/* Draw the icon for the current item highlighted or not */
 		if (action_taken)
 		{
-			cursor_time = SD_GetTimeCount() + 35; // 1/2 second flashes
+			blink_time = SD_GetTimeCount() + 35; // 1/2 second flashes
 			action_taken = false;
 		}
 
 		// draw icon with cursor blink
-		if (SD_GetTimeCount() >= cursor_time)
+		if (SD_GetTimeCount() >= blink_time)
 		{
 			cursor = !cursor;
 			action_taken = true;
@@ -1176,7 +1176,7 @@ void US_RunCards()
 				// move one menu item immediately
 				controller_dy = cursor.yMotion * 40;
 			}
-			else
+			else if (SD_GetTimeCount() > last_cursor_time)
 #endif
 			{
 				controller_dy += cursor.yMotion;
@@ -1218,6 +1218,9 @@ void US_RunCards()
 				action_taken = true;
 			}
 		}
+#ifndef CK_VANILLA
+		last_cursor_time = SD_GetTimeCount();
+#endif
 		IN_PumpEvents();
 		//CK_SetTicsPerFrame();
 		VL_Present();
