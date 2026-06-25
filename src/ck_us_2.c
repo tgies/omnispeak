@@ -345,18 +345,8 @@ bool USL_ConfirmQuick(bool saving, int quickSaveSlot)
 
 		VH_UpdateScreen();
 
-		IN_ClearKeysDown();
-		while (IN_GetLastScan() != IN_SC_Y)
-		{
-			if (IN_GetLastScan() == IN_SC_N || IN_GetLastScan() == IN_SC_Escape)
-			{
-				IN_ClearKeysDown();
-				return false;
-			}
-			VL_Yield();
-			IN_PumpEvents();
-			VL_Present();
-		}
+		if (!IN_YesNo())
+			return false;
 
 		US_ClearWindow();
 		return true;

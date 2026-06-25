@@ -931,6 +931,50 @@ bool IN_UserInput(int tics, bool waitPress)
 	return false;
 }
 
+// Answer a 'Y/N' question. Taken from USL_CtlDialog
+bool IN_YesNo()
+{
+	IN_ScanCode k;
+	IN_ControlFrame state;
+	/* Wait for button1 or a key to be pressed */
+	IN_ClearKeysDown();
+	do
+	{
+		k = IN_SC_None;
+		VL_Yield(); // Keep CPU usage low
+		IN_PumpEvents();
+		IN_ReadControls(0, &state);
+		if (state.jump)
+		{
+			k = IN_SC_Y;
+		}
+		else if (state.pogo)
+		{
+			k = IN_SC_N;
+		}
+		else
+		{
+			k = IN_GetLastScan();
+		}
+		VL_Present();
+	} while (k == IN_SC_None);
+
+	/* Wait for the button to be released */
+	do
+	{
+		VL_Yield(); // Keep CPU usage low
+		IN_PumpEvents();
+		IN_ReadControls(0, &state);
+		VL_Present();
+	} while (state.jump || state.pogo);
+	IN_ClearKeysDown();
+
+	US_DrawCards();
+
+	/* Return true or false based on the user's choice */
+	return (k == IN_SC_Y);
+}
+
 // Must be in-sync with IN_JoyConfItem
 const char *IN_JoyConfNames[] = {
 	"in_joy_jump",

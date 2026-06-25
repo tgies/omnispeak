@@ -311,6 +311,7 @@ void IN_ReadControls(int player, IN_ControlFrame *controls);
 void IN_WaitButton();
 int IN_CheckAck();
 bool IN_UserInput(int tics, bool arg4);
+bool IN_YesNo();
 int IN_GetJoyConf(IN_JoyConfItem item);
 void IN_SetJoyConf(IN_JoyConfItem item, int value);
 bool IN_GetJoyButtonFromMask(uint16_t mask, IN_JoyConfItem btn);
