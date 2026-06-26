@@ -22,7 +22,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stdio.h>
 #include <string.h>
 
-#include <SDL.h>
+#if WITH_SDL == 3
+#define SDL_ENABLE_OLD_NAMES
+#include <SDL3/SDL.h>
+#else
+#include "SDL.h"
+#endif
 #include <unistd.h>
 
 #include <oplhw.h>
@@ -73,8 +78,7 @@ int SD_OPLHW_t0InterruptThread(void *param)
 
 		if (ticks)
 		{
-			if (SDL_LockMutex(soundSystemMutex))
-				continue;
+			SDL_LockMutex(soundSystemMutex);
 			SDL_t0Service();
 			SDL_UnlockMutex(soundSystemMutex);
 			if (!SD_OPLHW_WaitTicksSpin)
@@ -158,8 +162,7 @@ void SD_OPLHW_Lock()
 {
 	if (SD_OPLHW_mutexLocked)
 		Quit("Attempted sound system re-entry (locking an already locked mutex)");
-	if (SDL_LockMutex(soundSystemMutex))
-		Quit("Couldn't lock sound system mutex.");
+	SDL_LockMutex(soundSystemMutex);
 	SD_OPLHW_mutexLocked = true;
 }
 
